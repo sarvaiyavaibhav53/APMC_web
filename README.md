@@ -27,7 +27,7 @@ APMC markets.
 ## ⚙️ Installation
 
 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/apmc-website.git
+git clone https://github.com/sarvaiyavaibhav53/apmc-website.git
 cd apmc-website
 
 2. Install dependencies
