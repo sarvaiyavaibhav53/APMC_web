@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APMC - Trend Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%
+            }
+
+            50% {
+                background-position: 100% 50%
+            }
+
+            100% {
+                background-position: 0% 50%
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0)
+            }
+        }
+
+        @keyframes pageLoader {
+            0% {
+                width: 0%
+            }
+
+            100% {
+                width: 100%
+            }
+        }
+
+        @keyframes floatBob {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-10px)
+            }
+        }
+
+        @keyframes trophyGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 rgba(251, 191, 36, 0)
+            }
+
+            50% {
+                box-shadow: 0 0 25px rgba(251, 191, 36, 0.35)
+            }
+        }
+
+        @keyframes worstGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 rgba(251, 113, 133, 0)
+            }
+
+            50% {
+                box-shadow: 0 0 25px rgba(251, 113, 133, 0.25)
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%
+            }
+
+            100% {
+                left: 100%
+            }
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(-45deg, #050508, #08080f, #0c0c1a, #10102a);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, #4f46e5, #818cf8, #34d399);
+            animation: pageLoader 1.2s ease forwards;
+            z-index: 9999;
+        }
+
+        /* LOADING OVERLAY */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 15, 0.92);
+            backdrop-filter: blur(10px);
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .loading-icon {
+            font-size: 48px;
+            animation: floatBob 1.5s ease-in-out infinite;
+            margin-bottom: 16px;
+        }
+
+        .loading-text {
+            color: #818cf8;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .loading-bar-wrapper {
+            width: 200px;
+            height: 3px;
+            background: rgba(99, 102, 241, 0.15);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .loading-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4f46e5, #818cf8, #34d399);
+            border-radius: 3px;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: rgba(5, 5, 15, 0.85) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2) !important;
+            padding: 14px 0;
+            animation: fadeInDown 0.5s ease forwards;
+        }
+
+        .navbar-brand {
+            color: #818cf8 !important;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .btn-danger-glow {
+            background: rgba(251, 113, 133, 0.08);
+            border: 1px solid rgba(251, 113, 133, 0.4);
+            border-radius: 10px;
+            color: #fb7185;
+            font-weight: 600;
+            padding: 8px 16px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-danger-glow:hover {
+            background: rgba(251, 113, 133, 0.18);
+            color: #fb7185;
+            transform: translateY(-2px);
+        }
+
+        .btn-action {
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 8px 16px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-indigo {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #818cf8;
+        }
+
+        .btn-indigo:hover {
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+            transform: translateY(-2px);
+        }
+
+        /* HEADER BOX */
+        .header-box {
+            background: rgba(99, 102, 241, 0.07);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            animation: fadeInUp 0.4s ease forwards;
+        }
+
+        .badge-market {
+            background: rgba(129, 140, 248, 0.1);
+            border: 1px solid rgba(129, 140, 248, 0.35);
+            color: #818cf8;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-commodity {
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid rgba(52, 211, 153, 0.35);
+            color: #34d399;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* BEST/WORST CARDS */
+        .highlight-card {
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .highlight-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .best-card {
+            background: rgba(251, 191, 36, 0.07);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            animation: fadeInUp 0.5s ease forwards, trophyGlow 3s ease-in-out 0.6s infinite;
+        }
+
+        .worst-card {
+            background: rgba(251, 113, 133, 0.07);
+            border: 1px solid rgba(251, 113, 133, 0.25);
+            animation: fadeInUp 0.5s ease 0.1s forwards, worstGlow 3s ease-in-out 0.7s infinite;
+        }
+
+        .card-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .card-label {
+            color: #64748b;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 4px;
+        }
+
+        .card-month {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .card-price {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* CHART CONTAINER */
+        .chart-container {
+            background: rgba(99, 102, 241, 0.05);
+            border: 1px solid rgba(99, 102, 241, 0.12);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 25px;
+            animation: fadeInUp 0.6s ease forwards;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .chart-container:hover {
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.1);
+        }
+
+        .chart-title {
+            color: #818cf8;
+            font-weight: 700;
+            font-size: 17px;
+            margin-bottom: 18px;
+        }
+
+        /* MONTH FILTER */
+        .filter-select {
+            background: rgba(99, 102, 241, 0.07) !important;
+            border: 1px solid rgba(99, 102, 241, 0.2) !important;
+            color: #ffffff !important;
+            border-radius: 10px !important;
+            padding: 8px 12px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            border-color: #818cf8 !important;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+            outline: none;
+        }
+
+        .filter-select option {
+            background-color: #0c0c1a;
+        }
+
+        .filter-select.changed {
+            border-color: #818cf8 !important;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-loader"></div>
+
+    <!-- LOADING OVERLAY -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-icon">📉</div>
+        <div class="loading-text" id="loadingText">Loading...</div>
+        <div class="loading-bar-wrapper">
+            <div class="loading-bar" id="loadingBar"></div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg mb-4">
+        <div class="container">
+            <a class="navbar-brand">🌾 APMC Market</a>
+            <div class="ms-auto d-flex gap-2 align-items-center">
+                <a href="/dashboard" class="btn-action btn-indigo">🏠 Dashboard</a>
+                <a href="/profile" class="btn-action btn-indigo">👤 Profile</a>
+                <a href="/logout" class="btn btn-danger-glow">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="header-box">
+            <div class="d-flex gap-3 align-items-center flex-wrap">
+                <span class="badge-market">🏪 {{ data.market_name }}</span>
+                <span class="badge-commodity">🌾 {{ data.commodity_name }}</span>
+            </div>
+            <a href="/results?market_id={{ market_id }}&commodity_id={{ commodity_id }}&from_date={{ from_date }}&to_date={{ to_date }}"
+                class="btn-action btn-indigo" onclick="showLoading('Going back...')">⬅ Back to Results</a>
+        </div>
+
+        <!-- BEST / WORST MONTH CARDS -->
+        <div class="row mb-2">
+            <div class="col-md-6">
+                <div class="highlight-card best-card">
+                    <div class="card-icon">🏆</div>
+                    <div class="card-label">Best Month — Highest Avg Price</div>
+                    <div class="card-month" style="color:#fbbf24;">{{ data.best_month }}</div>
+                    <div class="card-price" style="color:#fbbf24;">₹ {{ data.best_month_price }}</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="highlight-card worst-card">
+                    <div class="card-icon">📉</div>
+                    <div class="card-label">Lowest Month — Lowest Avg Price</div>
+                    <div class="card-month" style="color:#fb7185;">{{ data.worst_month }}</div>
+                    <div class="card-price" style="color:#fb7185;">₹ {{ data.worst_month_price }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MONTHLY CHART -->
+        <div class="chart-container">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+                <div class="chart-title" style="margin-bottom:0;">📅 Monthly Average Price Trend</div>
+                <select id="monthFilter" class="filter-select" style="width:150px;">
+                    <option value="all">All Months</option>
+                    <option value="01">January</option>
+                    <option value="02">February</option>
+                    <option value="03">March</option>
+                    <option value="04">April</option>
+                    <option value="05">May</option>
+                    <option value="06">June</option>
+                    <option value="07">July</option>
+                    <option value="08">August</option>
+                    <option value="09">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+            <canvas id="monthlyChart" height="80"></canvas>
+        </div>
+
+    </div>
+
+    <script>
+        const allMonthlyLabels = {{ data.monthly_labels | tojson }};
+        const allMonthlyAvg = {{ data.monthly_avg | tojson }};
+        const monthFilter = document.getElementById('monthFilter');
+
+        const ctx = document.getElementById('monthlyChart').getContext('2d');
+        const monthlyChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: allMonthlyLabels,
+                datasets: [{
+                    label: 'Monthly Avg Price (₹)',
+                    data: allMonthlyAvg,
+                    borderColor: '#818cf8',
+                    backgroundColor: (context) => {
+                        const chart = context.chart;
+                        const { ctx: c, chartArea } = chart;
+                        if (!chartArea) return 'rgba(129,140,248,0.08)';
+                        const gradient = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                        gradient.addColorStop(0, 'rgba(129,140,248,0.25)');
+                        gradient.addColorStop(1, 'rgba(129,140,248,0.01)');
+                        return gradient;
+                    },
+                    borderWidth: 2.5,
+                    pointRadius: 3,
+                    pointHoverRadius: 7,
+                    pointBackgroundColor: '#818cf8',
+                    pointHoverBackgroundColor: '#ffffff',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                clip: false,
+                animation: { duration: 1800, easing: 'easeInOutQuart' },
+                interaction: { intersect: false, mode: 'index' },
+                plugins: {
+                    legend: { labels: { color: '#818cf8', font: { size: 13 }, padding: 20 } },
+                    tooltip: {
+                        backgroundColor: '#0c0c1a',
+                        borderColor: 'rgba(99,102,241,0.3)',
+                        borderWidth: 1,
+                        titleColor: '#818cf8',
+                        bodyColor: '#e2e8f0',
+                        padding: 12,
+                        callbacks: { label: c => ' ₹ ' + c.parsed.y }
+                    }
+                },
+                scales: {
+                    x: { ticks: { color: '#64748b', maxTicksLimit: 12, font: { size: 11 } }, grid: { color: 'rgba(99,102,241,0.06)' }, border: { color: 'rgba(99,102,241,0.1)' } },
+                    y: { ticks: { color: '#64748b', font: { size: 11 }, callback: v => '₹' + v }, grid: { color: 'rgba(99,102,241,0.06)' }, border: { color: 'rgba(99,102,241,0.1)' } }
+                }
+            }
+        });
+
+        function filterChart() {
+            const selectedMonth = monthFilter.value;
+            let filteredLabels = [], filteredData = [];
+            allMonthlyLabels.forEach((label, i) => {
+                const month = label.substring(5, 7);
+                if (selectedMonth === 'all' || month === selectedMonth) {
+                    filteredLabels.push(label);
+                    filteredData.push(allMonthlyAvg[i]);
+                }
+            });
+            monthlyChart.data.labels = filteredLabels;
+            monthlyChart.data.datasets[0].data = filteredData;
+            monthlyChart.update('active');
+            monthFilter.classList.add('changed');
+            setTimeout(() => monthFilter.classList.remove('changed'), 600);
+        }
+
+        monthFilter.addEventListener('change', filterChart);
+
+        // LOADING OVERLAY
+        function showLoading(text) {
+            const overlay = document.getElementById('loadingOverlay');
+            document.getElementById('loadingText').textContent = text || 'Loading...';
+            overlay.classList.add('active');
+            let w = 0;
+            const interval = setInterval(() => {
+                w += Math.random() * 35;
+                if (w > 90) w = 90;
+                document.getElementById('loadingBar').style.width = w + '%';
+            }, 200);
+            setTimeout(() => { document.getElementById('loadingBar').style.width = '100%'; clearInterval(interval); }, 800);
+        }
+    </script>
+</body>
+
+</html>

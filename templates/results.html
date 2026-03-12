@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APMC - Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%
+            }
+
+            50% {
+                background-position: 100% 50%
+            }
+
+            100% {
+                background-position: 0% 50%
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes flipIn {
+            from {
+                opacity: 0;
+                transform: rotateX(-90deg)
+            }
+
+            to {
+                opacity: 1;
+                transform: rotateX(0deg)
+            }
+        }
+
+        @keyframes pageLoader {
+            0% {
+                width: 0%
+            }
+
+            100% {
+                width: 100%
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%
+            }
+
+            100% {
+                left: 100%
+            }
+        }
+
+        @keyframes floatBob {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-10px)
+            }
+        }
+
+        @keyframes glowGreen {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 rgba(52, 211, 153, 0)
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(52, 211, 153, 0.2)
+            }
+        }
+
+        @keyframes glowRed {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 rgba(251, 113, 133, 0)
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(251, 113, 133, 0.2)
+            }
+        }
+
+        @keyframes glowIndigo {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 rgba(129, 140, 248, 0)
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(129, 140, 248, 0.2)
+            }
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(-45deg, #050508, #08080f, #0c0c1a, #10102a);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, #4f46e5, #818cf8, #34d399);
+            animation: pageLoader 1.2s ease forwards;
+            z-index: 9999;
+            border-radius: 0 3px 3px 0;
+        }
+
+        /* LOADING OVERLAY */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 15, 0.92);
+            backdrop-filter: blur(10px);
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .loading-icon {
+            font-size: 48px;
+            animation: floatBob 1.5s ease-in-out infinite;
+            margin-bottom: 16px;
+        }
+
+        .loading-text {
+            color: #818cf8;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .loading-bar-wrapper {
+            width: 200px;
+            height: 3px;
+            background: rgba(99, 102, 241, 0.15);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .loading-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4f46e5, #818cf8, #34d399);
+            border-radius: 3px;
+            transition: width 0.1s ease;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: rgba(5, 5, 15, 0.85) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2) !important;
+            padding: 14px 0;
+            animation: fadeInDown 0.5s ease forwards;
+        }
+
+        .navbar-brand {
+            color: #818cf8 !important;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .btn-danger-glow {
+            background: rgba(251, 113, 133, 0.08);
+            border: 1px solid rgba(251, 113, 133, 0.4);
+            border-radius: 10px;
+            color: #fb7185;
+            font-weight: 600;
+            padding: 8px 16px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-danger-glow:hover {
+            background: rgba(251, 113, 133, 0.18);
+            color: #fb7185;
+            transform: translateY(-2px);
+        }
+
+        /* HEADER BOX */
+        .header-box {
+            background: rgba(99, 102, 241, 0.07);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            animation: fadeInUp 0.4s ease forwards;
+        }
+
+        .badge-market {
+            background: rgba(129, 140, 248, 0.1);
+            border: 1px solid rgba(129, 140, 248, 0.35);
+            color: #818cf8;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-commodity {
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid rgba(52, 211, 153, 0.35);
+            color: #34d399;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* BTN ROW */
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .btn-action {
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 9px 18px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.4s ease;
+        }
+
+        .btn-action:hover::before {
+            left: 100%;
+        }
+
+        .btn-indigo {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #818cf8;
+        }
+
+        .btn-indigo:hover {
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-green {
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            color: #34d399;
+        }
+
+        .btn-green:hover {
+            background: rgba(52, 211, 153, 0.15);
+            color: #34d399;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 211, 153, 0.25);
+        }
+
+        .btn-yellow {
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            color: #fbbf24;
+        }
+
+        .btn-yellow:hover {
+            background: rgba(251, 191, 36, 0.15);
+            color: #fbbf24;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(251, 191, 36, 0.25);
+        }
+
+        /* STAT CARDS */
+        .stat-card {
+            background: rgba(99, 102, 241, 0.07);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+            animation: flipIn 0.5s ease forwards;
+            transform-origin: top;
+        }
+
+        .stat-card:nth-child(1) {
+            animation-delay: 0.1s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+            border-color: rgba(251, 113, 133, 0.3);
+            animation: flipIn 0.5s ease 0.1s forwards, glowRed 3s ease-in-out 0.7s infinite;
+        }
+
+        .stat-card:nth-child(2) {
+            animation-delay: 0.2s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+            border-color: rgba(52, 211, 153, 0.3);
+            animation: flipIn 0.5s ease 0.2s forwards, glowGreen 3s ease-in-out 0.8s infinite;
+        }
+
+        .stat-card:nth-child(3) {
+            animation-delay: 0.3s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+            border-color: rgba(129, 140, 248, 0.3);
+            animation: flipIn 0.5s ease 0.3s forwards, glowIndigo 3s ease-in-out 0.9s infinite;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 11px;
+            margin-bottom: 6px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        /* CHART */
+        .chart-container {
+            background: rgba(99, 102, 241, 0.05);
+            border: 1px solid rgba(99, 102, 241, 0.12);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 25px;
+            animation: fadeInUp 0.6s ease forwards;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .chart-container:hover {
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.1);
+        }
+
+        .chart-title {
+            color: #818cf8;
+            font-weight: 700;
+            font-size: 17px;
+            margin-bottom: 18px;
+        }
+
+        /* TABLE */
+        .table-container {
+            background: rgba(99, 102, 241, 0.05);
+            border: 1px solid rgba(99, 102, 241, 0.12);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 25px;
+            animation: fadeInUp 0.7s ease forwards;
+            overflow: hidden;
+        }
+
+        .table {
+            color: #ffffff !important;
+            margin: 0;
+        }
+
+        .table thead th {
+            background: rgba(79, 70, 229, 0.3) !important;
+            color: #818cf8 !important;
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            border-color: rgba(99, 102, 241, 0.15) !important;
+            padding: 14px 16px;
+        }
+
+        .table tbody tr {
+            background: rgba(99, 102, 241, 0.03) !important;
+            border-color: rgba(99, 102, 241, 0.08) !important;
+            transition: background 0.2s ease;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background: rgba(99, 102, 241, 0.07) !important;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(99, 102, 241, 0.12) !important;
+        }
+
+        .table tbody td {
+            border-color: rgba(99, 102, 241, 0.08) !important;
+            padding: 12px 16px;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        .min-rate {
+            color: #fb7185 !important;
+            font-weight: 700;
+        }
+
+        .max-rate {
+            color: #34d399 !important;
+            font-weight: 700;
+        }
+
+        .date-cell {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .row-num {
+            color: #475569;
+            font-size: 12px;
+        }
+
+        /* RESPONSIVE */
+        @media(max-width:768px) {
+            .date-row {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-loader"></div>
+
+    <!-- LOADING OVERLAY -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-icon">🌾</div>
+        <div class="loading-text" id="loadingText">Loading...</div>
+        <div class="loading-bar-wrapper">
+            <div class="loading-bar" id="loadingBar"></div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg mb-4">
+        <div class="container">
+            <a class="navbar-brand">🌾 APMC Market</a>
+            <div class="ms-auto d-flex gap-2 align-items-center">
+                <a href="/dashboard" class="btn-action btn-indigo">🏠 Dashboard</a>
+                <a href="/profile" class="btn-action btn-indigo">👤 Profile</a>
+                <a href="/logout" class="btn btn-danger-glow">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header-box">
+            <div class="d-flex gap-3 align-items-center flex-wrap">
+                <span class="badge-market">🏪 {{ rates[0][0] }}</span>
+                <span class="badge-commodity">🌾 {{ rates[0][1] }}</span>
+                <span style="color:#64748b; font-size:12px;">📅 {{ request.args.get('from_date') }} → {{
+                    request.args.get('to_date') }}</span>
+            </div>
+            <span style="color:#64748b; font-size:12px;">{{ rates|length }} records found</span>
+        </div>
+
+        <!-- STAT CARDS -->
+        <div class="row mb-2">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-label">📉 Lowest Price</div>
+                    <div class="stat-value" style="color:#fb7185;" data-target="{{ lowest_price }}">₹0</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-label">📈 Highest Price</div>
+                    <div class="stat-value" style="color:#34d399;" data-target="{{ highest_price }}">₹0</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-label">📊 Average Price</div>
+                    <div class="stat-value" style="color:#818cf8;" data-target="{{ avg_price }}">₹0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="btn-row">
+            <a href="/trend?market_id={{ request.args.get('market_id') }}&commodity_id={{ request.args.get('commodity_id') }}&from_date={{ request.args.get('from_date') }}&to_date={{ request.args.get('to_date') }}"
+                class="btn-action btn-indigo" onclick="showLoading('Loading trend analysis...')">📉 Trend Analysis</a>
+            <a href="/predict?market_id={{ request.args.get('market_id') }}&commodity_id={{ request.args.get('commodity_id') }}&from_date={{ request.args.get('from_date') }}&to_date={{ request.args.get('to_date') }}"
+                class="btn-action btn-green" onclick="showLoading('Running ML prediction...')">🤖 Price Prediction</a>
+            <a href="/season?market_id={{ request.args.get('market_id') }}&commodity_id={{ request.args.get('commodity_id') }}&from_date={{ request.args.get('from_date') }}&to_date={{ request.args.get('to_date') }}"
+                class="btn-action btn-yellow" onclick="showLoading('Analysing seasons...')">📅 Season Analysis</a>
+            <a href="/download?market_id={{ request.args.get('market_id') }}&commodity_id={{ request.args.get('commodity_id') }}&from_date={{ request.args.get('from_date') }}&to_date={{ request.args.get('to_date') }}&format=csv"
+                class="btn-action btn-indigo">📥 CSV</a>
+            <a href="/download?market_id={{ request.args.get('market_id') }}&commodity_id={{ request.args.get('commodity_id') }}&from_date={{ request.args.get('from_date') }}&to_date={{ request.args.get('to_date') }}&format=excel"
+                class="btn-action btn-green">📊 Excel</a>
+        </div>
+
+        <!-- CHART -->
+        <div class="chart-container">
+            <div class="chart-title">📈 Min / Max Price Trend</div>
+            <canvas id="priceChart" height="80"></canvas>
+        </div>
+
+        <div class="table-container">
+            <div class="chart-title mb-3">📋 Detailed Rate Data</div>
+            <div class="table-responsive">
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:rgba(79,70,229,0.35);">
+                            <th
+                                style="color:#818cf8; font-size:12px; letter-spacing:0.8px; text-transform:uppercase; padding:14px 16px; border-bottom:1px solid rgba(99,102,241,0.2); font-weight:600;">
+                                #</th>
+                            <th
+                                style="color:#818cf8; font-size:12px; letter-spacing:0.8px; text-transform:uppercase; padding:14px 16px; border-bottom:1px solid rgba(99,102,241,0.2); font-weight:600;">
+                                Date</th>
+                            <th
+                                style="color:#818cf8; font-size:12px; letter-spacing:0.8px; text-transform:uppercase; padding:14px 16px; border-bottom:1px solid rgba(99,102,241,0.2); font-weight:600;">
+                                Min Rate (₹)</th>
+                            <th
+                                style="color:#818cf8; font-size:12px; letter-spacing:0.8px; text-transform:uppercase; padding:14px 16px; border-bottom:1px solid rgba(99,102,241,0.2); font-weight:600;">
+                                Max Rate (₹)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rate in rates %}
+                        <tr style="background:{% if loop.index % 2 == 0 %}rgba(30,30,60,0.6){% else %}rgba(15,15,35,0.8){% endif %}; transition:background 0.2s ease;"
+                            onmouseover="this.style.background='rgba(99,102,241,0.15)'"
+                            onmouseout="this.style.background='{% if loop.index % 2 == 0 %}rgba(30,30,60,0.6){% else %}rgba(15,15,35,0.8){% endif %}'">
+                            <td
+                                style="color:#475569; font-size:12px; padding:12px 16px; border-bottom:1px solid rgba(99,102,241,0.06);">
+                                {{ loop.index }}</td>
+                            <td
+                                style="color:#94a3b8; font-size:13px; padding:12px 16px; border-bottom:1px solid rgba(99,102,241,0.06);">
+                                {{ rate[2] }}</td>
+                            <td
+                                style="color:#fb7185; font-weight:700; padding:12px 16px; border-bottom:1px solid rgba(99,102,241,0.06);">
+                                ₹ {{ rate[3] }}</td>
+                            <td
+                                style="color:#34d399; font-weight:700; padding:12px 16px; border-bottom:1px solid rgba(99,102,241,0.06);">
+                                ₹ {{ rate[4] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // COUNT UP
+        function countUp(el, target, duration) {
+            let start = 0;
+            const step = target / (duration / 16);
+            const timer = setInterval(() => {
+                start += step;
+                if (start >= target) { start = target; clearInterval(timer); }
+                el.textContent = '₹' + Math.floor(start).toLocaleString();
+            }, 16);
+        }
+        window.addEventListener('load', () => {
+            document.querySelectorAll('[data-target]').forEach(el => {
+                countUp(el, parseFloat(el.dataset.target), 1200);
+            });
+        });
+
+        // LOADING OVERLAY
+        function showLoading(text) {
+            const overlay = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
+            const bar = document.getElementById('loadingBar');
+            loadingText.textContent = text || 'Loading...';
+            overlay.classList.add('active');
+            let w = 0;
+            const interval = setInterval(() => {
+                w += Math.random() * 35;
+                if (w > 90) w = 90;
+                bar.style.width = w + '%';
+            }, 200);
+            setTimeout(() => { bar.style.width = '100%'; clearInterval(interval); }, 800);
+        }
+
+        // CHART
+        const dates = {{ dates | tojson }};
+        const minRates = {{ min_rates | tojson }};
+        const maxRates = {{ max_rates | tojson }};
+
+        new Chart(document.getElementById('priceChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [
+                    {
+                        label: 'Min Rate (₹)',
+                        data: minRates,
+                        borderColor: '#fb7185',
+                        backgroundColor: 'rgba(251,113,133,0.08)',
+                        borderWidth: 2,
+                        pointRadius: 2,
+                        pointHoverRadius: 5,
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Max Rate (₹)',
+                        data: maxRates,
+                        borderColor: '#34d399',
+                        backgroundColor: 'rgba(52,211,153,0.08)',
+                        borderWidth: 2,
+                        pointRadius: 2,
+                        pointHoverRadius: 5,
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                clip: false,
+                animation: { duration: 1500, easing: 'easeInOutQuart' },
+                interaction: { intersect: false, mode: 'index' },
+                plugins: {
+                    legend: { labels: { color: '#818cf8', font: { size: 13 }, padding: 20 } },
+                    tooltip: {
+                        backgroundColor: '#0c0c1a',
+                        borderColor: 'rgba(99,102,241,0.3)',
+                        borderWidth: 1,
+                        titleColor: '#818cf8',
+                        bodyColor: '#e2e8f0',
+                        padding: 12,
+                        callbacks: { label: c => ' ₹ ' + c.parsed.y }
+                    }
+                },
+                scales: {
+                    x: { ticks: { color: '#64748b', maxTicksLimit: 10, font: { size: 11 } }, grid: { color: 'rgba(99,102,241,0.06)' } },
+                    y: { ticks: { color: '#64748b', callback: v => '₹' + v }, grid: { color: 'rgba(99,102,241,0.06)' } }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

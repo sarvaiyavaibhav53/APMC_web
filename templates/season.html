@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APMC - Season Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%
+            }
+
+            50% {
+                background-position: 100% 50%
+            }
+
+            100% {
+                background-position: 0% 50%
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-40px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0)
+            }
+        }
+
+        @keyframes flipIn {
+            from {
+                opacity: 0;
+                transform: rotateX(-90deg)
+            }
+
+            to {
+                opacity: 1;
+                transform: rotateX(0deg)
+            }
+        }
+
+        @keyframes pageLoader {
+            0% {
+                width: 0%
+            }
+
+            100% {
+                width: 100%
+            }
+        }
+
+        @keyframes floatBob {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-10px)
+            }
+        }
+
+        @keyframes goldGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 rgba(251, 191, 36, 0)
+            }
+
+            50% {
+                box-shadow: 0 0 28px rgba(251, 191, 36, 0.35)
+            }
+        }
+
+        @keyframes greenPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 rgba(52, 211, 153, 0)
+            }
+
+            50% {
+                box-shadow: 0 0 28px rgba(52, 211, 153, 0.3)
+            }
+        }
+
+        @keyframes barGrow {
+            from {
+                transform: scaleY(0)
+            }
+
+            to {
+                transform: scaleY(1)
+            }
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(-45deg, #050508, #08080f, #0c0c1a, #10102a);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, #4f46e5, #818cf8, #34d399);
+            animation: pageLoader 1.2s ease forwards;
+            z-index: 9999;
+        }
+
+        /* LOADING OVERLAY */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 15, 0.92);
+            backdrop-filter: blur(10px);
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .loading-icon {
+            font-size: 48px;
+            animation: floatBob 1.5s ease-in-out infinite;
+            margin-bottom: 16px;
+        }
+
+        .loading-text {
+            color: #818cf8;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .loading-bar-wrapper {
+            width: 200px;
+            height: 3px;
+            background: rgba(99, 102, 241, 0.15);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .loading-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4f46e5, #818cf8, #34d399);
+            border-radius: 3px;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: rgba(5, 5, 15, 0.85) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2) !important;
+            padding: 14px 0;
+            animation: fadeInDown 0.5s ease forwards;
+        }
+
+        .navbar-brand {
+            color: #818cf8 !important;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .btn-danger-glow {
+            background: rgba(251, 113, 133, 0.08);
+            border: 1px solid rgba(251, 113, 133, 0.4);
+            border-radius: 10px;
+            color: #fb7185;
+            font-weight: 600;
+            padding: 8px 16px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-danger-glow:hover {
+            background: rgba(251, 113, 133, 0.18);
+            color: #fb7185;
+            transform: translateY(-2px);
+        }
+
+        .btn-action {
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 8px 16px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-indigo {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #818cf8;
+        }
+
+        .btn-indigo:hover {
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+            transform: translateY(-2px);
+        }
+
+        /* HEADER BOX */
+        .header-box {
+            background: rgba(99, 102, 241, 0.07);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            animation: fadeInUp 0.4s ease forwards;
+        }
+
+        .badge-market {
+            background: rgba(129, 140, 248, 0.1);
+            border: 1px solid rgba(129, 140, 248, 0.35);
+            color: #818cf8;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-commodity {
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid rgba(52, 211, 153, 0.35);
+            color: #34d399;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* STAT CARDS */
+        .stat-card {
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .stat-card-gold {
+            background: rgba(251, 191, 36, 0.07);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            animation: flipIn 0.5s ease 0.1s forwards, goldGlow 3s ease-in-out 0.8s infinite;
+            opacity: 0;
+        }
+
+        .stat-card-green {
+            background: rgba(52, 211, 153, 0.07);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            animation: flipIn 0.5s ease 0.2s forwards, greenPulse 3s ease-in-out 0.9s infinite;
+            opacity: 0;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 11px;
+            margin-bottom: 6px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .stat-sub {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .stat-hint {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        .stat-hint strong {
+            color: inherit;
+        }
+
+        /* CHART */
+        .chart-container {
+            background: rgba(99, 102, 241, 0.05);
+            border: 1px solid rgba(99, 102, 241, 0.12);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 25px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .chart-container:hover {
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.1);
+        }
+
+        .chart-container:nth-child(1) {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .chart-container:nth-child(2) {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .chart-title {
+            color: #818cf8;
+            font-weight: 700;
+            font-size: 17px;
+            margin-bottom: 18px;
+        }
+
+        /* SEASON BREAKDOWN CARDS */
+        .season-card {
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid;
+            transition: all 0.3s ease;
+        }
+
+        .season-card:nth-child(1) {
+            animation: slideInLeft 0.4s ease 0.1s forwards;
+            opacity: 0;
+        }
+
+        .season-card:nth-child(2) {
+            animation: slideInLeft 0.4s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        .season-card:nth-child(3) {
+            animation: slideInLeft 0.4s ease 0.3s forwards;
+            opacity: 0;
+        }
+
+        .season-card:nth-child(4) {
+            animation: slideInLeft 0.4s ease 0.4s forwards;
+            opacity: 0;
+        }
+
+        .season-card:hover {
+            transform: translateX(6px);
+            box-shadow: 0 6px 24px rgba(99, 102, 241, 0.15);
+        }
+
+        .season-winter {
+            background: rgba(96, 165, 250, 0.07);
+            border-color: rgba(96, 165, 250, 0.25);
+        }
+
+        .season-summer {
+            background: rgba(251, 191, 36, 0.07);
+            border-color: rgba(251, 191, 36, 0.25);
+        }
+
+        .season-monsoon {
+            background: rgba(52, 211, 153, 0.07);
+            border-color: rgba(52, 211, 153, 0.25);
+        }
+
+        .season-autumn {
+            background: rgba(251, 146, 60, 0.07);
+            border-color: rgba(251, 146, 60, 0.25);
+        }
+
+        .season-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .season-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .season-stat {
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .season-stat-label {
+            color: #64748b;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .season-stat-value {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .best-badge {
+            background: rgba(251, 191, 36, 0.15);
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            color: #fbbf24;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .supply-badge {
+            background: rgba(52, 211, 153, 0.15);
+            border: 1px solid rgba(52, 211, 153, 0.4);
+            color: #34d399;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .section-title {
+            color: #818cf8;
+            font-weight: 700;
+            font-size: 17px;
+            margin-bottom: 16px;
+            animation: fadeInUp 0.5s ease forwards;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-loader"></div>
+
+    <!-- LOADING OVERLAY -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-icon">📅</div>
+        <div class="loading-text" id="loadingText">Loading...</div>
+        <div class="loading-bar-wrapper">
+            <div class="loading-bar" id="loadingBar"></div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg mb-4">
+        <div class="container">
+            <a class="navbar-brand">🌾 APMC Market</a>
+            <div class="ms-auto d-flex gap-2 align-items-center">
+                <a href="/dashboard" class="btn-action btn-indigo">🏠 Dashboard</a>
+                <a href="/profile" class="btn-action btn-indigo">👤 Profile</a>
+                <a href="/logout" class="btn btn-danger-glow">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="header-box">
+            <div class="d-flex gap-3 align-items-center flex-wrap">
+                <span class="badge-market">🏪 {{ market_name }}</span>
+                <span class="badge-commodity">🌾 {{ commodity_name }}</span>
+            </div>
+            <a href="/results?market_id={{ market_id }}&commodity_id={{ commodity_id }}&from_date={{ from_date }}&to_date={{ to_date }}"
+                class="btn-action btn-indigo" onclick="showLoading('Going back...')">⬅ Back to Results</a>
+        </div>
+
+        <!-- STAT CARDS -->
+        <div class="row mb-2">
+            <div class="col-md-6">
+                <div class="stat-card stat-card-gold">
+                    <div class="stat-label">💰 Best Price Season</div>
+                    <div class="stat-value" style="color:#fbbf24;">{{ best_price_season }}</div>
+                    <div class="stat-sub" style="color:#fbbf24;">Avg Price: ₹ {{ best_price_season_value }}</div>
+                    <div class="stat-hint">
+                        📈 Prices are highest this season — <strong style="color:#fbbf24;">best time to sell</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="stat-card stat-card-green">
+                    <div class="stat-label">🌾 Peak Supply Season</div>
+                    <div class="stat-value" style="color:#34d399;">{{ peak_supply_season }}</div>
+                    <div class="stat-sub" style="color:#34d399;">Avg Price: ₹ {{ peak_supply_season_value }}</div>
+                    <div class="stat-hint">
+                        🛒 Most supply available this season — <strong style="color:#34d399;">best time to buy</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEASON BAR CHART -->
+        <div class="chart-container">
+            <div class="chart-title">🌡️ Average Price by Season</div>
+            <canvas id="seasonChart" height="80"></canvas>
+        </div>
+
+        <!-- MONTHLY LINE CHART -->
+        <div class="chart-container">
+            <div class="chart-title">📅 Average Price by Month</div>
+            <canvas id="monthChart" height="80"></canvas>
+        </div>
+
+        <!-- SEASON BREAKDOWN -->
+        <div class="section-title">📋 Season Breakdown</div>
+        {% for s in seasons_list %}
+        {% if 'Winter' in s.season %}
+        <div class="season-card season-winter">
+            {% elif 'Summer' in s.season %}
+            <div class="season-card season-summer">
+                {% elif 'Monsoon' in s.season %}
+                <div class="season-card season-monsoon">
+                    {% else %}
+                    <div class="season-card season-autumn">
+                        {% endif %}
+                        <div class="season-name">
+                            {{ s.season }}
+                            {% if s.season == best_price_season %}<span class="best-badge">💰 Best Price</span>{% endif
+                            %}
+                            {% if s.season == peak_supply_season %}<span class="supply-badge">🌾 Peak Supply</span>{%
+                            endif %}
+                        </div>
+                        <div class="season-stats">
+                            <div class="season-stat">
+                                <div class="season-stat-label">Avg Price</div>
+                                <div class="season-stat-value" style="color:#818cf8;">₹ {{ s.avg_price }}</div>
+                            </div>
+                            <div class="season-stat">
+                                <div class="season-stat-label">Min Price</div>
+                                <div class="season-stat-value" style="color:#fb7185;">₹ {{ s.min_price }}</div>
+                            </div>
+                            <div class="season-stat">
+                                <div class="season-stat-label">Max Price</div>
+                                <div class="season-stat-value" style="color:#34d399;">₹ {{ s.max_price }}</div>
+                            </div>
+                            <div class="season-stat">
+                                <div class="season-stat-label">Records</div>
+                                <div class="season-stat-value" style="color:#fbbf24;">{{ s.total_records }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+                <script>
+                    const seasonLabels = {{ season_labels | tojson }};
+                    const seasonValues = {{ season_values | tojson }};
+                    const monthlyLabels = {{ monthly_labels | tojson }};
+                    const monthlyValues = {{ monthly_values | tojson }};
+
+                    const seasonColors = {
+                        'Winter ❄️': { bg: 'rgba(96,165,250,0.2)', border: '#60a5fa' },
+                        'Summer ☀️': { bg: 'rgba(251,191,36,0.2)', border: '#fbbf24' },
+                        'Monsoon 🌧️': { bg: 'rgba(52,211,153,0.2)', border: '#34d399' },
+                        'Autumn 🍂': { bg: 'rgba(251,146,60,0.2)', border: '#fb923c' }
+                    };
+                    const bgColors = seasonLabels.map(s => seasonColors[s]?.bg || 'rgba(129,140,248,0.2)');
+                    const borderColors = seasonLabels.map(s => seasonColors[s]?.border || '#818cf8');
+
+                    const tooltipStyle = {
+                        backgroundColor: '#0c0c1a', borderColor: 'rgba(99,102,241,0.3)',
+                        borderWidth: 1, titleColor: '#818cf8', bodyColor: '#e2e8f0',
+                        padding: 12, callbacks: { label: c => ' ₹ ' + c.parsed.y }
+                    };
+
+                    // SEASON BAR CHART
+                    new Chart(document.getElementById('seasonChart').getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: seasonLabels,
+                            datasets: [{
+                                label: 'Avg Price (₹)',
+                                data: seasonValues,
+                                backgroundColor: bgColors,
+                                borderColor: borderColors,
+                                borderWidth: 2,
+                                borderRadius: 10,
+                                borderSkipped: false,
+                                barPercentage: 0.5
+                            }]
+                        },
+                        options: {
+                            responsive: true, clip: false,
+                            animation: { duration: 1800, easing: 'easeOutBounce' },
+                            layout: { padding: { top: 20 } },
+                            plugins: { legend: { labels: { color: '#818cf8', font: { size: 13 } } }, tooltip: tooltipStyle },
+                            scales: {
+                                x: { ticks: { color: '#64748b', font: { size: 12 } }, grid: { color: 'rgba(99,102,241,0.06)' } },
+                                y: {
+                                    min: Math.floor(Math.min(...seasonValues) * 0.95),
+                                    max: Math.ceil(Math.max(...seasonValues) * 1.05),
+                                    ticks: { color: '#64748b', callback: v => '₹' + v },
+                                    grid: { color: 'rgba(99,102,241,0.06)' }
+                                }
+                            }
+                        }
+                    });
+
+                    // MONTHLY LINE CHART
+                    new Chart(document.getElementById('monthChart').getContext('2d'), {
+                        type: 'line',
+                        data: {
+                            labels: monthlyLabels,
+                            datasets: [{
+                                label: 'Monthly Avg Price (₹)',
+                                data: monthlyValues,
+                                borderColor: '#818cf8',
+                                backgroundColor: (context) => {
+                                    const { ctx: c, chartArea } = context.chart;
+                                    if (!chartArea) return 'rgba(129,140,248,0.08)';
+                                    const gradient = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                                    gradient.addColorStop(0, 'rgba(129,140,248,0.25)');
+                                    gradient.addColorStop(1, 'rgba(129,140,248,0.01)');
+                                    return gradient;
+                                },
+                                borderWidth: 2.5,
+                                pointRadius: 5,
+                                pointHoverRadius: 8,
+                                pointBackgroundColor: '#818cf8',
+                                pointHoverBackgroundColor: '#ffffff',
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true, clip: false,
+                            animation: { duration: 1800, easing: 'easeInOutQuart' },
+                            interaction: { intersect: false, mode: 'index' },
+                            plugins: { legend: { labels: { color: '#818cf8', font: { size: 13 } } }, tooltip: tooltipStyle },
+                            scales: {
+                                x: { ticks: { color: '#64748b', font: { size: 12 } }, grid: { color: 'rgba(99,102,241,0.06)' } },
+                                y: {
+                                    min: Math.floor(Math.min(...monthlyValues) * 0.95),
+                                    max: Math.ceil(Math.max(...monthlyValues) * 1.05),
+                                    ticks: { color: '#64748b', callback: v => '₹' + v },
+                                    grid: { color: 'rgba(99,102,241,0.06)' }
+                                }
+                            }
+                        }
+                    });
+
+                    // LOADING OVERLAY
+                    function showLoading(text) {
+                        const overlay = document.getElementById('loadingOverlay');
+                        document.getElementById('loadingText').textContent = text || 'Loading...';
+                        overlay.classList.add('active');
+                        let w = 0;
+                        const interval = setInterval(() => {
+                            w += Math.random() * 35;
+                            if (w > 90) w = 90;
+                            document.getElementById('loadingBar').style.width = w + '%';
+                        }, 200);
+                        setTimeout(() => { document.getElementById('loadingBar').style.width = '100%'; clearInterval(interval); }, 800);
+                    }
+                </script>
+</body>
+
+</html>

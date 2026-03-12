@@ -1,0 +1,14 @@
+
+flask
+mysql-connector-python
+werkzeug
+pandas
+numpy
+scikit-learn
+reportlab
+openpyxl
+gunicorn 
+
+
+
+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

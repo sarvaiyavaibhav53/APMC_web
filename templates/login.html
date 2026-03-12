@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APMC - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%
+            }
+
+            50% {
+                background-position: 100% 50%
+            }
+
+            100% {
+                background-position: 0% 50%
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0)
+            }
+        }
+
+        @keyframes pageLoader {
+            0% {
+                width: 0%
+            }
+
+            100% {
+                width: 100%
+            }
+        }
+
+        @keyframes floatWheat {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.6;
+            }
+
+            90% {
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.2;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.3)
+            }
+        }
+
+        @keyframes glowPulse {
+
+            0%,
+            100% {
+                text-shadow: 0 0 10px #818cf844
+            }
+
+            50% {
+                text-shadow: 0 0 25px #818cf899
+            }
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(-45deg, #050508, #08080f, #0c0c1a, #10102a);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, #4f46e5, #818cf8, #34d399);
+            animation: pageLoader 1.2s ease forwards;
+            z-index: 9999;
+        }
+
+        /* PARTICLES */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #818cf8;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            animation-delay: var(--delay);
+        }
+
+        /* WHEAT PARTICLES */
+        .wheat-particle {
+            position: fixed;
+            bottom: -50px;
+            font-size: var(--size);
+            animation: floatWheat var(--duration) linear infinite;
+            animation-delay: var(--delay);
+            pointer-events: none;
+            z-index: 0;
+            left: var(--left);
+            opacity: 0;
+        }
+
+        /* SPLIT SCREEN */
+        .split-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* LEFT SIDE */
+        .left-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px 50px;
+            background: rgba(79, 70, 229, 0.05);
+            border-right: 1px solid rgba(99, 102, 241, 0.15);
+            animation: fadeInLeft 0.7s ease forwards;
+        }
+
+        .left-logo {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .left-title {
+            font-size: 34px;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.2;
+            margin-bottom: 12px;
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        .left-title span {
+            color: #818cf8;
+        }
+
+        .left-sub {
+            color: #64748b;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 36px;
+        }
+
+        .stat-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 36px;
+        }
+
+        .stat-box {
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            padding: 16px 20px;
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .stat-box-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: #818cf8;
+        }
+
+        .stat-box-label {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-list li span {
+            color: #34d399;
+            font-size: 16px;
+        }
+
+        /* RIGHT SIDE */
+        .right-panel {
+            width: 460px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 40px;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .login-box {
+            width: 100%;
+        }
+
+        .login-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .login-sub {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 28px;
+        }
+
+        .form-label {
+            color: #818cf8;
+            font-weight: 500;
+            font-size: 13px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        /* INPUT */
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-control {
+            background: rgba(99, 102, 241, 0.07) !important;
+            border: 1px solid rgba(99, 102, 241, 0.2) !important;
+            color: #ffffff !important;
+            border-radius: 10px !important;
+            padding: 12px 16px;
+            font-size: 14px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            background: rgba(99, 102, 241, 0.12) !important;
+            border-color: #818cf8 !important;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+            color: #ffffff !important;
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: #475569 !important;
+        }
+
+        /* PASSWORD TOGGLE */
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper .form-control {
+            padding-right: 45px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 16px;
+            transition: color 0.3s ease;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .toggle-password:hover {
+            color: #818cf8;
+        }
+
+        /* LOGIN BUTTON */
+        .btn-login {
+            background: linear-gradient(135deg, #4f46e5, #818cf8);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 700;
+            padding: 13px;
+            width: 100%;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.5);
+            color: white;
+        }
+
+        .btn-login:hover::before {
+            left: 100%;
+        }
+
+        .divider {
+            height: 1px;
+            background: rgba(99, 102, 241, 0.1);
+            margin: 20px 0;
+        }
+
+        .auth-link {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .auth-link a {
+            color: #818cf8;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-link a:hover {
+            text-decoration: underline;
+        }
+
+        .alert-danger {
+            background: rgba(251, 113, 133, 0.08) !important;
+            border: 1px solid rgba(251, 113, 133, 0.3) !important;
+            color: #fb7185 !important;
+            border-radius: 10px !important;
+            font-size: 13px;
+            padding: 10px 14px;
+            margin-bottom: 18px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .left-panel {
+                display: none;
+            }
+
+            .right-panel {
+                width: 100%;
+                padding: 40px 24px;
+            }
+
+            body {
+                overflow: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-loader"></div>
+
+    <!-- STARS -->
+    <div class="particles" id="particles"></div>
+
+    <!-- WHEAT PARTICLES -->
+    <div id="wheat-container"></div>
+
+    <div class="split-container">
+
+        <!-- LEFT PANEL -->
+        <div class="left-panel">
+            <div class="left-logo">🌾</div>
+            <div class="left-title">APMC <span>Market</span><br>Information</div>
+            <div class="left-sub">Your smart platform for agricultural<br>commodity price tracking & prediction.</div>
+
+            <div class="stat-row">
+                <div class="stat-box">
+                    <div class="stat-box-value">3+</div>
+                    <div class="stat-box-label">Markets</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box-value">100+</div>
+                    <div class="stat-box-label">Commodities</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box-value">3L+</div>
+                    <div class="stat-box-label">Records</div>
+                </div>
+            </div>
+
+            <ul class="feature-list">
+                <li><span>✅</span> Real-time price tracking</li>
+                <li><span>✅</span> ML-powered price prediction</li>
+                <li><span>✅</span> Season analysis</li>
+                <li><span>✅</span> CSV & Excel export</li>
+                <li><span>✅</span> Trend analysis charts</li>
+            </ul>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="right-panel">
+            <div class="login-box">
+                <div class="login-title">Welcome back 👋</div>
+                <div class="login-sub">Login to your APMC account</div>
+
+                {% if error %}
+                <div class="alert-danger">⚠️ {{ error }}</div>
+                {% endif %}
+
+                <form method="POST" action="/login">
+                    <div class="mb-3">
+                        <label class="form-label">👤 Username</label>
+                        <input type="text" name="username" class="form-control" placeholder="Enter your username"
+                            required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">🔒 Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" name="password" id="password" class="form-control"
+                                placeholder="Enter your password" required>
+                            <button type="button" class="toggle-password"
+                                onclick="togglePassword('password', this)">👁️</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-login">🔑 Login</button>
+                </form>
+
+                <div class="divider"></div>
+                <div class="auth-link">
+                    Don't have an account? <a href="/register">Register here</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // STARS
+        const container = document.getElementById('particles');
+        for (let i = 0; i < 80; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.cssText = `
+                left: ${Math.random() * 100}%;
+                top: ${Math.random() * 100}%;
+                --duration: ${2 + Math.random() * 4}s;
+                --delay: ${Math.random() * 4}s;
+                width: ${1 + Math.random() * 2}px;
+                height: ${1 + Math.random() * 2}px;
+                opacity: ${0.2 + Math.random() * 0.8};
+            `;
+            container.appendChild(star);
+        }
+
+        // WHEAT
+        const wheatContainer = document.getElementById('wheat-container');
+        const emojis = ['🌾', '🌿', '🍃', '✨', '🌱'];
+        for (let i = 0; i < 12; i++) {
+            const w = document.createElement('div');
+            w.classList.add('wheat-particle');
+            w.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            w.style.cssText = `
+                --left: ${Math.random() * 100}%;
+                --size: ${12 + Math.random() * 16}px;
+                --duration: ${8 + Math.random() * 12}s;
+                --delay: ${Math.random() * 10}s;
+            `;
+            wheatContainer.appendChild(w);
+        }
+
+        // PASSWORD TOGGLE
+        function togglePassword(id, btn) {
+            const input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                btn.textContent = '👁️';
+            }
+        }
+    </script>
+</body>
+
+</html>

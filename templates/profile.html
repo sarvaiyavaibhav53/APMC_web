@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APMC - Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%
+            }
+
+            50% {
+                background-position: 100% 50%
+            }
+
+            100% {
+                background-position: 0% 50%
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0)
+            }
+        }
+
+        @keyframes flipIn {
+            from {
+                opacity: 0;
+                transform: rotateX(-90deg)
+            }
+
+            to {
+                opacity: 1;
+                transform: rotateX(0deg)
+            }
+        }
+
+        @keyframes pageLoader {
+            0% {
+                width: 0%
+            }
+
+            100% {
+                width: 100%
+            }
+        }
+
+        @keyframes avatarGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 rgba(129, 140, 248, 0)
+            }
+
+            50% {
+                box-shadow: 0 0 30px rgba(129, 140, 248, 0.4)
+            }
+        }
+
+        @keyframes floatBob {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-8px)
+            }
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(-45deg, #050508, #08080f, #0c0c1a, #10102a);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, #4f46e5, #818cf8, #34d399);
+            animation: pageLoader 1.2s ease forwards;
+            z-index: 9999;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: rgba(5, 5, 15, 0.85) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2) !important;
+            padding: 14px 0;
+            animation: fadeInDown 0.5s ease forwards;
+        }
+
+        .navbar-brand {
+            color: #818cf8 !important;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .btn-danger-glow {
+            background: rgba(251, 113, 133, 0.08);
+            border: 1px solid rgba(251, 113, 133, 0.4);
+            border-radius: 10px;
+            color: #fb7185;
+            font-weight: 600;
+            padding: 8px 16px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-danger-glow:hover {
+            background: rgba(251, 113, 133, 0.18);
+            color: #fb7185;
+            transform: translateY(-2px);
+        }
+
+        .btn-action {
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 8px 16px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-indigo {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #818cf8;
+        }
+
+        .btn-indigo:hover {
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+            transform: translateY(-2px);
+        }
+
+        /* AVATAR CARD */
+        .avatar-card {
+            background: rgba(99, 102, 241, 0.07);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.4s ease forwards;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .avatar-card:hover {
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
+        }
+
+        .avatar-circle {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #4f46e5, #818cf8);
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 800;
+            color: white;
+            animation: avatarGlow 3s ease-in-out infinite, floatBob 4s ease-in-out infinite;
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .profile-badge {
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            color: #34d399;
+            padding: 5px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .profile-joined {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        /* STAT CARDS */
+        .stat-card {
+            background: rgba(99, 102, 241, 0.07);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+        }
+
+        .stat-card:nth-child(1) {
+            animation: flipIn 0.5s ease 0.1s forwards;
+            opacity: 0;
+        }
+
+        .stat-card:nth-child(2) {
+            animation: flipIn 0.5s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        .stat-card:nth-child(3) {
+            animation: flipIn 0.5s ease 0.3s forwards;
+            opacity: 0;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 11px;
+            margin-bottom: 8px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 800;
+            word-break: break-word;
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        /* SECTION CARD */
+        .section-card {
+            background: rgba(99, 102, 241, 0.05);
+            border: 1px solid rgba(99, 102, 241, 0.12);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .section-title {
+            color: #818cf8;
+            font-weight: 700;
+            font-size: 17px;
+            margin-bottom: 18px;
+        }
+
+        /* RECENT ITEMS */
+        .recent-item {
+            background: rgba(99, 102, 241, 0.05);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .recent-item:nth-child(1) {
+            animation: slideInLeft 0.4s ease 0.1s forwards;
+            opacity: 0;
+        }
+
+        .recent-item:nth-child(2) {
+            animation: slideInLeft 0.4s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        .recent-item:nth-child(3) {
+            animation: slideInLeft 0.4s ease 0.3s forwards;
+            opacity: 0;
+        }
+
+        .recent-item:nth-child(4) {
+            animation: slideInLeft 0.4s ease 0.4s forwards;
+            opacity: 0;
+        }
+
+        .recent-item:nth-child(5) {
+            animation: slideInLeft 0.4s ease 0.5s forwards;
+            opacity: 0;
+        }
+
+        .recent-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: rgba(99, 102, 241, 0.25);
+            transform: translateX(6px);
+        }
+
+        .recent-market {
+            color: #818cf8;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .recent-commodity {
+            color: #34d399;
+            font-size: 13px;
+        }
+
+        .recent-date {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .recent-arrow {
+            color: #4f46e5;
+            transition: transform 0.3s ease;
+        }
+
+        .recent-item:hover .recent-arrow {
+            transform: translateX(4px);
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+
+        .empty-state-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        /* INFO ROW */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.08);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .info-value {
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-loader"></div>
+
+    <nav class="navbar navbar-expand-lg mb-4">
+        <div class="container">
+            <a class="navbar-brand">🌾 APMC Market</a>
+            <div class="ms-auto d-flex gap-2 align-items-center">
+                <a href="/dashboard" class="btn-action btn-indigo">🏠 Dashboard</a>
+                <a href="/logout" class="btn btn-danger-glow">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width:900px;">
+
+        <div class="row">
+
+            <!-- LEFT COLUMN -->
+            <div class="col-md-4">
+
+                <!-- AVATAR CARD -->
+                <div class="avatar-card">
+                    <div class="avatar-circle">{{ username[0].upper() }}</div>
+                    <div class="profile-name">{{ username }}</div>
+                    <div class="profile-badge">✅ Active User</div>
+                    <div class="profile-joined">📅 Joined: {{ joined.strftime('%d %b %Y') if joined else 'N/A' }}</div>
+                </div>
+
+                <!-- ACCOUNT INFO -->
+                <div class="section-card">
+                    <div class="section-title">📋 Account Info</div>
+                    <div class="info-row">
+                        <span class="info-label">👤 Username</span>
+                        <span class="info-value">{{ username }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">🔐 Password</span>
+                        <span class="info-value">••••••••</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">📅 Member Since</span>
+                        <span class="info-value">{{ joined.strftime('%d %b %Y') if joined else 'N/A' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">🌐 Role</span>
+                        <span class="info-value" style="color:#34d399;">User</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="col-md-8">
+
+                <!-- STAT CARDS -->
+                <div class="row mb-2">
+                    <div class="col-4">
+                        <div class="stat-card" style="border-color:rgba(129,140,248,0.3);">
+                            <div class="stat-icon">🔍</div>
+                            <div class="stat-label">Total Searches</div>
+                            <div class="stat-value" style="color:#818cf8;" data-target="{{ total_searches }}">0</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stat-card" style="border-color:rgba(52,211,153,0.3);">
+                            <div class="stat-icon">🌾</div>
+                            <div class="stat-label">Top Commodity</div>
+                            <div class="stat-value" style="color:#34d399; font-size:14px;">{{ most_commodity }}</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stat-card" style="border-color:rgba(251,191,36,0.3);">
+                            <div class="stat-icon">🏪</div>
+                            <div class="stat-label">Top Market</div>
+                            <div class="stat-value" style="color:#fbbf24; font-size:14px;">{{ most_market }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RECENT SEARCHES -->
+                <div class="section-card">
+                    <div class="section-title">🕘 Recent Searches</div>
+                    {% if recent_searches %}
+                    {% for s in recent_searches %}
+                    <a href="/results?market_id={{ s.market_id }}&commodity_id={{ s.commodity_id }}&from_date={{ s.from_date }}&to_date={{ s.to_date }}"
+                        class="recent-item">
+                        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                            <span class="recent-market">🏪 {{ s.market_name }}</span>
+                            <span class="recent-commodity">🌾 {{ s.commodity_name }}</span>
+                            <span class="recent-date">📅 {{ s.from_date }} → {{ s.to_date }}</span>
+                        </div>
+                        <span class="recent-arrow">→</span>
+                    </a>
+                    {% endfor %}
+                    {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔍</div>
+                        <div>No searches yet!</div>
+                        <a href="/dashboard"
+                            style="color:#818cf8; font-size:13px; text-decoration:none; margin-top:8px; display:inline-block;">Start
+                            searching →</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // COUNT UP
+        window.addEventListener('load', () => {
+            document.querySelectorAll('[data-target]').forEach(el => {
+                const target = parseInt(el.dataset.target);
+                let start = 0;
+                const step = Math.max(1, Math.ceil(target / (800 / 16)));
+                const timer = setInterval(() => {
+                    start += step;
+                    if (start >= target) { start = target; clearInterval(timer); }
+                    el.textContent = start;
+                }, 16);
+            });
+        });
+    </script>
+</body>
+
+</html>
